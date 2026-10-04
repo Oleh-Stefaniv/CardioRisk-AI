@@ -1,0 +1,55 @@
+{
+  "metadata": {
+    "title": "Науковий бенчмаркінг методів XAI (Розділ 2)",
+    "candidate": "Стефанів Олег, Спеціальність 122 «Комп'ютерні науки»",
+    "institution": "ДВНЗ «Ужгородський національний університет»",
+    "eval_patients_n": 200,
+    "features_n": 16,
+    "date": "2026-10-04 15:03:05"
+  },
+  "model_performance": {
+    "XGBoost (Black Box + XAI)": {
+      "roc_auc": 0.8483,
+      "pr_auc": 0.3656,
+      "accuracy": 0.8808,
+      "f1_score": 0.4057,
+      "brier_score": 0.0707
+    },
+    "EBM (Glassbox GA2M)": {
+      "roc_auc": 0.8467,
+      "pr_auc": 0.3635,
+      "accuracy": 0.8787,
+      "f1_score": 0.4105,
+      "brier_score": 0.0706
+    },
+    "Logistic Regression (Linear)": {
+      "roc_auc": 0.8451,
+      "pr_auc": 0.36,
+      "accuracy": 0.8816,
+      "f1_score": 0.4032,
+      "brier_score": 0.071
+    }
+  },
+  "latency_ms_per_sample": {
+    "TreeSHAP": 1.1051443219184875,
+    "EBM_Local": 0.09403139352798462,
+    "LIME": 15.94625473022461,
+    "KernelSHAP": 19.167494773864746
+  },
+  "faithfulness_deletion_auc": {
+    "TreeSHAP": 0.0795,
+    "LIME": 0.0741,
+    "Random_Baseline": 0.0461
+  },
+  "stability_metrics": {
+    "treeshap_lipschitz": 2.9015,
+    "lime_lipschitz": 0.5292,
+    "treeshap_rank_stability_rho": 0.711,
+    "lime_rank_stability_rho": 0.2048
+  },
+  "inter_method_agreement": {
+    "mean_spearman_rho": 0.8626,
+    "top3_jaccard_similarity": 0.4365,
+    "top5_jaccard_similarity": 0.6298
+  }
+}

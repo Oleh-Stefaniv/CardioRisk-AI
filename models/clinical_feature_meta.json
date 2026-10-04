@@ -1,0 +1,64 @@
+{
+  "features_order": [
+    "age_years",
+    "gender_male",
+    "height",
+    "weight",
+    "BMI",
+    "ap_hi",
+    "ap_lo",
+    "pulse_pressure",
+    "cholesterol",
+    "gluc",
+    "smoke",
+    "alco",
+    "active"
+  ],
+  "translations": {
+    "age_years": "Вік (років)",
+    "gender_male": "Стать (чоловіча)",
+    "height": "Зріст (см)",
+    "weight": "Вага (кг)",
+    "BMI": "Індекс маси тіла (ІМТ, кг/м²)",
+    "ap_hi": "Систолічний артеріальний тиск (САТ, мм рт. ст.)",
+    "ap_lo": "Діастолічний артеріальний тиск (ДАТ, мм рт. ст.)",
+    "pulse_pressure": "Пульсовий тиск (ПТ = САТ - ДАТ, мм рт. ст.)",
+    "cholesterol": "Загальний холестерин",
+    "gluc": "Глюкоза крові натще",
+    "smoke": "Тютюнопаління",
+    "alco": "Вживання алкоголю",
+    "active": "Регулярна фізична активність"
+  },
+  "reference_ranges": {
+    "ap_hi": {
+      "optimal": "<120",
+      "normal": "120-129",
+      "high_normal": "130-139",
+      "hypertension_1": "140-159",
+      "hypertension_2": "160-179",
+      "hypertension_3": ">=180"
+    },
+    "ap_lo": {
+      "optimal": "<80",
+      "normal": "80-84",
+      "high_normal": "85-89",
+      "hypertension_1": "90-99",
+      "hypertension_2": "100-109",
+      "hypertension_3": ">=110"
+    },
+    "pulse_pressure": {
+      "normal": "<50 мм рт. ст.",
+      "elevated": ">=50 мм рт. ст. (ознака ригідності аорти)"
+    },
+    "cholesterol_mmol": {
+      "normal": "<5.2 ммоль/л",
+      "borderline": "5.2-6.2 ммоль/л",
+      "high": ">6.2 ммоль/л"
+    },
+    "glucose_mmol": {
+      "normal": "<5.6 ммоль/л",
+      "prediabetes": "5.6-6.9 ммоль/л",
+      "diabetes": ">=7.0 ммоль/л"
+    }
+  }
+}

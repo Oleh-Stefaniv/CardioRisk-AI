@@ -1,0 +1,40 @@
+{
+  "model_name": "Screening Monotonic XGBoost (CardioRisk AI)",
+  "cohort_name": "CardioRisk Integrated Clinical Cohort",
+  "cohort_size": 68414,
+  "features_count": 12,
+  "features": [
+    "age_years",
+    "gender_male",
+    "height",
+    "weight",
+    "BMI",
+    "HighBP",
+    "HighChol",
+    "Diabetes",
+    "Smoker",
+    "Alcohol",
+    "PhysActivity",
+    "FamilyHistory"
+  ],
+  "roc_auc": 0.7818,
+  "pr_auc": 0.5376,
+  "optimal_threshold": 0.2316,
+  "accuracy": 0.7095,
+  "sensitivity": 0.7334,
+  "specificity": 0.702,
+  "monotone_constraints": {
+    "age_years": 1,
+    "gender_male": 1,
+    "height": 0,
+    "weight": 0,
+    "BMI": 1,
+    "HighBP": 1,
+    "HighChol": 1,
+    "Diabetes": 1,
+    "Smoker": 1,
+    "Alcohol": 1,
+    "PhysActivity": -1,
+    "FamilyHistory": 1
+  }
+}
