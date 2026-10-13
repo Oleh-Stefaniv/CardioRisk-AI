@@ -51,3 +51,9 @@ desktop.ini
 1 запрос*.txt
 1 запит*.txt
 Бакалавр/
+
+# Video & large media
+відео/
+*.mkv
+*.mp3
+*.wav
