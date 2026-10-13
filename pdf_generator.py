@@ -285,6 +285,12 @@ def build_clinical_report_pdf(
             Paragraph(f"{patient_info.get('PhysHlth', 0)} дн./міс. болю/слабкості", body_style),
             Paragraph("Труднощі при ходьбі", body_style),
             Paragraph(f"{'Так (задишка / дискомфорт)' if patient_info.get('DiffWalk') else 'Ні (відсутні)'}", body_style)
+        ],
+        [
+            Paragraph("Медичне страхування", body_style),
+            Paragraph(f"<b>{patient_info.get('insurance_title', 'Програма «Доступні ліки» (НСЗУ)')}</b>", body_style),
+            Paragraph("Витрати на ліки", body_style),
+            Paragraph(f"<b>{patient_info.get('insurance_cost', '0 грн / міс')}</b> ({patient_info.get('insurance_covered_pct', '100% реімбурсація')})", body_style)
         ]
     ]
 
@@ -505,7 +511,13 @@ def build_clinical_report_pdf(
     if not recs_list:
         recs_list.append("• <b>Профілактичний режим:</b> всі досліджувані параметри перебувають у межах клінічної норми. Рекомендовано щорічний скринінговий огляд лікаря.")
 
-    elements.append(Paragraph("<br/>".join(recs_list), ParagraphStyle('RecList', parent=body_style, leading=13)))
+    # Фармакоекономічний статус та страхування
+    ins_title_val = patient_info.get('insurance_title', 'Програма «Доступні ліки» (НСЗУ)')
+    ins_cost_val = patient_info.get('insurance_cost', '0 грн / міс')
+    ins_desc_val = patient_info.get('insurance_plan_desc', '100% забезпечення базовими кардіопрепаратами за програмою реімбурсації.')
+    recs_list.append(f"• <b>Фармакоекономічний маршрут ({ins_title_val}):</b> орієнтовні витрати пацієнта: <b>{ins_cost_val}</b>. {ins_desc_val} <i>(Принцип Algorithmic Fairness: страховка адаптує доступність ліків, не впливаючи на біологічний розрахунок ризику).</i>")
+
+    elements.append(Paragraph("<br/>".join(recs_list), ParagraphStyle('RecList', parent=body_style, leading=12)))
 
     # 7. Секція 6: Юридичний статус та підпис лікаря
     elements.append(Spacer(1, 10))
