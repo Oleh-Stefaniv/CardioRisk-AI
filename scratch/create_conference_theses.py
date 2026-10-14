@@ -228,6 +228,6 @@ for ref in refs:
     p_ref.paragraph_format.left_indent = Inches(0.49)
     p_ref.paragraph_format.first_line_indent = Inches(-0.49)
 
-out_path = r"C:\Users\Олег\Desktop\Магістерська\Тези_конференція_Стефанів_О_Т.docx"
+out_path = r"C:\Users\Олег\Desktop\Магістерська\Документи\Тези_конференція_Стефанів_О_Т.docx"
 doc.save(out_path)
 print(f"Conference theses saved successfully to: {out_path} ({os.path.getsize(out_path)} bytes)")

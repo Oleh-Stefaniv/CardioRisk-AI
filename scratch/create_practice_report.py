@@ -681,6 +681,6 @@ run_c = p_code.add_run(code_snippet)
 run_c.font.name = 'Courier New'
 run_c.font.size = Pt(9.5)
 
-out_file = r"C:\Users\Олег\Desktop\Магістерська\Звіт_науково_дослідна_практика_Стефанів.docx"
+out_file = r"C:\Users\Олег\Desktop\Магістерська\Документи\Звіт_науково_дослідна_практика_Стефанів.docx"
 doc.save(out_file)
 print("SUCCESS: Practice report generated successfully at:", out_file)

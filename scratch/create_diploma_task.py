@@ -175,6 +175,6 @@ p_r.alignment = WD_ALIGN_PARAGRAPH.RIGHT
 p_r.add_run("Науковий керівник: _________________ Володимир НІКОЛЕНКО\n")
 p_r.runs[0].font.size = Pt(12)
 
-out_task_path = r"C:\Users\Олег\Desktop\Магістерська\Завдання_на_дипломну_роботу_Стефанів.docx"
+out_task_path = r"C:\Users\Олег\Desktop\Магістерська\Документи\Завдання_на_дипломну_роботу_Стефанів.docx"
 doc.save(out_task_path)
 print(f"Diploma task saved successfully to: {out_task_path} ({os.path.getsize(out_task_path)} bytes)")
