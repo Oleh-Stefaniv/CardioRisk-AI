@@ -3,14 +3,37 @@ import streamlit.components.v1 as components
 
 
 def inject_styles():
-    """Inject the complete light-theme CSS design system."""
+    """Inject the complete light-theme CSS design system and enforce light theme."""
     st.markdown("""
 <style>
 /* ── ШРИФТИ ТА БАЗОВИЙ РЕСЕТ ── */
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
 
+/* ── ПРИМУСОВИЙ СВІТЛИЙ РЕЖИМ НЕЗАЛЕЖНО ВІД СИСТЕМИ КОРИСТУВАЧА ── */
+:root, [data-theme="dark"], [data-theme="light"] {
+    color-scheme: light !important;
+}
+
 html, body, [class*="css"] {
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
+
+/* Повне перекриття всіх контейнерів Streamlit у білий колір */
+html, body, .stApp, [data-testid="stApp"], [data-testid="stAppViewContainer"], [data-testid="stMain"], section.main, .main {
+    background: #FFFFFF !important;
+    background-color: #FFFFFF !important;
+    color: #1E293B !important;
+    color-scheme: light !important;
+}
+
+header, [data-testid="stHeader"] {
+    background: #FFFFFF !important;
+    background-color: #FFFFFF !important;
+}
+
+[data-testid="stAppViewBlockContainer"], [data-testid="stVerticalBlock"] {
+    background: transparent !important;
+    background-color: transparent !important;
 }
 
 /* ── ПОВНЕ ВИДАЛЕННЯ БІЧНОЇ ПАНЕЛІ ── */
@@ -28,7 +51,7 @@ header[data-testid="stHeader"] button[aria-label="Expand sidebar"] {
     pointer-events: none !important;
 }
 
-/* ── ПРИХОВАТИ СЛУЖБОВИЙ HEADER STREAMLIT ── */
+/* ── ПРИХОВАТИ СЛУЖБОВИЙ HEADER STREAMLIT ТА СТАТУС ── */
 .stDeployButton, [data-testid="stDeployButton"], button[data-testid="stDeployButton"],
 header, header[data-testid="stHeader"], [data-testid="stHeader"],
 .stAppHeader, [data-testid="stToolbar"], [data-testid="stDecoration"],
@@ -44,11 +67,7 @@ header, header[data-testid="stHeader"], [data-testid="stHeader"],
     display: none !important;
 }
 
-/* ── ОСНОВНИЙ ФОН (СВІТЛА ТЕМА) ── */
-.main {
-    background: #FFFFFF !important;
-    color: #475569 !important;
-}
+/* ── РОБОЧИЙ КОНТЕЙНЕР ── */
 .block-container {
     max-width: 1200px !important;
     padding-top: 1rem !important;
@@ -58,6 +77,7 @@ header, header[data-testid="stHeader"], [data-testid="stHeader"],
     margin-left: auto !important;
     margin-right: auto !important;
     width: 100% !important;
+    background: #FFFFFF !important;
 }
 
 /* ── ГЛОБАЛЬНА НАВІГАЦІЙНА ПАНЕЛЬ ── */
@@ -72,7 +92,7 @@ header, header[data-testid="stHeader"], [data-testid="stHeader"],
 .nav-brand-title {
     font-size: 1.5rem;
     font-weight: 800;
-    color: #0F172A;
+    color: #0F172A !important;
     letter-spacing: -0.03em;
     display: flex;
     align-items: center;
@@ -81,33 +101,9 @@ header, header[data-testid="stHeader"], [data-testid="stHeader"],
 }
 .nav-brand-subtitle {
     font-size: 0.8rem;
-    color: #94A3B8;
+    color: #64748B !important;
     margin: 0.2rem 0 0 0;
     font-weight: 500;
-}
-.nav-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    padding: 0.45rem 1rem;
-    border-radius: 10px;
-    font-size: 0.88rem;
-    font-weight: 600;
-    color: #64748B;
-    text-decoration: none;
-    transition: all 0.2s;
-    border: 1px solid transparent;
-    cursor: pointer;
-    background: none;
-}
-.nav-link:hover {
-    color: #2563EB;
-    background: #EFF6FF;
-}
-.nav-link-active {
-    color: #2563EB !important;
-    background: #EFF6FF !important;
-    border-color: #BFDBFE !important;
 }
 .pulse-badge {
     display: inline-flex;
@@ -135,41 +131,6 @@ header, header[data-testid="stHeader"], [data-testid="stHeader"],
     100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
 }
 
-/* ── КАРТКИ ── */
-.card {
-    background: #FFFFFF;
-    border: 1px solid #E2E8F0;
-    border-radius: 16px;
-    padding: 1.5rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-    transition: box-shadow 0.25s, transform 0.25s;
-}
-.card:hover {
-    box-shadow: 0 10px 25px rgba(37, 99, 235, 0.08);
-    transform: translateY(-2px);
-}
-.panel-card {
-    background: #FFFFFF;
-    border: 1px solid #E2E8F0;
-    border-radius: 16px;
-    padding: 1.4rem;
-    margin-bottom: 1rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-}
-.panel-title {
-    font-size: 0.78rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: #64748B;
-    margin-bottom: 0.85rem;
-    padding-bottom: 0.45rem;
-    border-bottom: 1px solid #E2E8F0;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
 /* ── HERO SECTION (LANDING) ── */
 .hero-section {
     background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 50%, #E0F2FE 100%);
@@ -179,49 +140,40 @@ header, header[data-testid="stHeader"], [data-testid="stHeader"],
     margin-bottom: 2.5rem;
     position: relative;
     overflow: hidden;
-}
-.hero-section::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -20%;
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%);
-    pointer-events: none;
+    border: 1px solid #BFDBFE;
 }
 .hero-title {
     font-size: 2.4rem;
     font-weight: 800;
-    color: #1E293B;
+    color: #0F172A !important;
     letter-spacing: -0.03em;
     line-height: 1.2;
     margin-bottom: 1rem;
 }
 .hero-subtitle {
-    font-size: 1.1rem;
-    color: #475569;
+    font-size: 1.05rem;
+    color: #334155 !important;
     font-weight: 500;
-    max-width: 600px;
+    max-width: 650px;
     margin: 0 auto 2rem;
     line-height: 1.6;
 }
 
-/* ── FEATURE CARDS (LANDING) ── */
+/* ── FEATURE CARDS ── */
 .feature-card {
     background: #FFFFFF;
-    border: 1px solid #E2E8F0;
+    border: 1px solid #CBD5E1;
     border-radius: 16px;
     padding: 1.8rem 1.5rem;
     text-align: center;
     transition: all 0.25s;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     height: 100%;
 }
 .feature-card:hover {
-    border-color: #93C5FD;
-    box-shadow: 0 8px 25px rgba(37, 99, 235, 0.1);
-    transform: translateY(-4px);
+    border-color: #3B82F6;
+    box-shadow: 0 8px 25px rgba(37, 99, 235, 0.12);
+    transform: translateY(-3px);
 }
 .feature-icon {
     font-size: 2.8rem;
@@ -231,16 +183,16 @@ header, header[data-testid="stHeader"], [data-testid="stHeader"],
 .feature-title {
     font-size: 1.1rem;
     font-weight: 700;
-    color: #1E293B;
+    color: #0F172A !important;
     margin-bottom: 0.5rem;
 }
 .feature-desc {
     font-size: 0.88rem;
-    color: #64748B;
+    color: #475569 !important;
     line-height: 1.55;
 }
 
-/* ── STEP INDICATOR (LANDING) ── */
+/* ── STEPS & TRUST ── */
 .steps-container {
     display: flex;
     justify-content: center;
@@ -254,7 +206,7 @@ header, header[data-testid="stHeader"], [data-testid="stHeader"],
     align-items: center;
     gap: 0.7rem;
     background: #F8FAFC;
-    border: 1px solid #E2E8F0;
+    border: 1px solid #CBD5E1;
     border-radius: 12px;
     padding: 0.9rem 1.2rem;
 }
@@ -274,28 +226,28 @@ header, header[data-testid="stHeader"], [data-testid="stHeader"],
 .step-text {
     font-size: 0.88rem;
     font-weight: 600;
-    color: #334155;
+    color: #1E293B !important;
 }
 .step-arrow {
     font-size: 1.3rem;
-    color: #CBD5E1;
+    color: #94A3B8;
 }
 
-/* ── TRUST STATS (LANDING) ── */
 .trust-grid {
     display: flex;
     justify-content: center;
-    gap: 2rem;
+    gap: 1.5rem;
     flex-wrap: wrap;
     margin: 1.5rem 0;
 }
 .trust-stat {
     text-align: center;
     padding: 1.2rem 1.5rem;
-    background: #F8FAFC;
-    border: 1px solid #E2E8F0;
+    background: #FFFFFF;
+    border: 1px solid #CBD5E1;
     border-radius: 14px;
     min-width: 160px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
 }
 .trust-number {
     font-size: 1.8rem;
@@ -310,16 +262,16 @@ header, header[data-testid="stHeader"], [data-testid="stHeader"],
     margin-top: 0.2rem;
 }
 
-/* ── MODE BANNER ── */
+/* ── MODE BANNERS ── */
 .mode-banner-screening {
-    background: linear-gradient(90deg, #F0FDF4 0%, #FFFFFF 100%);
-    border-left: 4px solid #10B981;
-    border-top: 1px solid #D1FAE5;
-    border-right: 1px solid #D1FAE5;
-    border-bottom: 1px solid #D1FAE5;
+    background: #F0FDF4;
+    border-left: 5px solid #10B981;
+    border-top: 1px solid #BBF7D0;
+    border-right: 1px solid #BBF7D0;
+    border-bottom: 1px solid #BBF7D0;
     border-radius: 12px;
-    padding: 0.75rem 1.1rem;
-    margin-bottom: 1.1rem;
+    padding: 0.85rem 1.15rem;
+    margin-bottom: 1.2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -327,14 +279,14 @@ header, header[data-testid="stHeader"], [data-testid="stHeader"],
     gap: 0.6rem;
 }
 .mode-banner-clinical {
-    background: linear-gradient(90deg, #EFF6FF 0%, #FFFFFF 100%);
-    border-left: 4px solid #3B82F6;
+    background: #EFF6FF;
+    border-left: 5px solid #2563EB;
     border-top: 1px solid #BFDBFE;
     border-right: 1px solid #BFDBFE;
     border-bottom: 1px solid #BFDBFE;
     border-radius: 12px;
-    padding: 0.75rem 1.1rem;
-    margin-bottom: 1.1rem;
+    padding: 0.85rem 1.15rem;
+    margin-bottom: 1.2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -342,35 +294,152 @@ header, header[data-testid="stHeader"], [data-testid="stHeader"],
     gap: 0.6rem;
 }
 
-/* ── СТИЛІЗАЦІЯ РАДІО КНОПОК ── */
-[data-testid="stRadio"] > div {
-    display: flex;
-    gap: 0.5rem;
-    background: #F1F5F9;
-    border: 1px solid #E2E8F0;
-    border-radius: 12px;
-    padding: 0.35rem 0.6rem;
-}
-[data-testid="stRadio"] label span {
-    font-size: 0.84rem !important;
-    font-weight: 600 !important;
-    color: #334155 !important;
+/* ── РЕФАЙНИНГ ТАБІВ (SEGMENTED CONTROL STYLE — М'ЯКИЙ, НЕ ГРУБИЙ) ── */
+[data-testid="stTabs"] [data-baseweb="tab-highlight"],
+[data-testid="stTabs"] [data-baseweb="tab-border"],
+.stTabs [data-baseweb="tab-highlight"],
+.stTabs [data-baseweb="tab-border"],
+div[data-baseweb="tab-highlight"],
+div[data-baseweb="tab-border"] {
+    display: none !important;
+    background: transparent !important;
+    height: 0px !important;
+    visibility: hidden !important;
 }
 
-/* ── КАРТКА РЕЗУЛЬТАТУ РИЗИКУ (HERO RISK CARD) ── */
+.stTabs [data-baseweb="tab-list"], [data-testid="stTabs"] [data-baseweb="tab-list"] {
+    gap: 6px !important;
+    background: #F1F5F9 !important;
+    border: 1px solid #E2E8F0 !important;
+    border-radius: 12px !important;
+    padding: 5px !important;
+    margin-bottom: 1.2rem !important;
+}
+.stTabs [data-baseweb="tab"], [data-testid="stTabs"] [data-baseweb="tab"] {
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    font-size: 0.86rem !important;
+    padding: 0.5rem 1.1rem !important;
+    color: #64748B !important;
+    background: transparent !important;
+    border: 1px solid transparent !important;
+    transition: all 0.18s ease !important;
+}
+.stTabs [data-baseweb="tab"]:hover, [data-testid="stTabs"] [data-baseweb="tab"]:hover {
+    color: #1E293B !important;
+    background: rgba(255, 255, 255, 0.7) !important;
+}
+.stTabs [aria-selected="true"], [data-testid="stTabs"] [aria-selected="true"] {
+    background: #FFFFFF !important;
+    color: #2563EB !important;
+    font-weight: 700 !important;
+    border: 1px solid #CBD5E1 !important;
+    box-shadow: 0 1px 4px rgba(15, 23, 42, 0.08) !important;
+}
+
+/* ── ЧІТКЕ РОЗДІЛЕННЯ ПОЛІВ ВВЕДЕННЯ (НЕ ЗЛИВАЮТЬСЯ) ── */
+[data-testid="stWidgetLabel"] p {
+    font-size: 0.9rem !important;
+    font-weight: 700 !important;
+    color: #0F172A !important;
+    margin-bottom: 0.4rem !important;
+}
+
+[data-testid="stNumberInput"] {
+    margin-bottom: 0.9rem !important;
+}
+[data-testid="stNumberInputContainer"] {
+    border: 1.5px solid #94A3B8 !important;
+    border-radius: 10px !important;
+    background: #FFFFFF !important;
+    transition: all 0.2s ease !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+    overflow: hidden !important;
+}
+[data-testid="stNumberInputContainer"]:focus-within {
+    border-color: #2563EB !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2) !important;
+}
+[data-testid="stNumberInputField"], [data-testid="stNumberInput"] input {
+    background: #FFFFFF !important;
+    color: #0F172A !important;
+    font-weight: 700 !important;
+    font-size: 0.95rem !important;
+    padding: 0.6rem 0.8rem !important;
+}
+[data-testid="stNumberInputStepDown"], [data-testid="stNumberInputStepUp"], [data-testid="stNumberInput"] button {
+    background: #F1F5F9 !important;
+    border-left: 1px solid #CBD5E1 !important;
+    color: #334155 !important;
+}
+[data-testid="stNumberInputStepDown"]:hover, [data-testid="stNumberInputStepUp"]:hover, [data-testid="stNumberInput"] button:hover {
+    background: #E2E8F0 !important;
+    color: #0F172A !important;
+}
+
+/* Радіо кнопки — чіткі контури */
+[data-testid="stRadio"] {
+    margin-bottom: 0.9rem !important;
+}
+[data-testid="stRadio"] div[role="radiogroup"], [data-testid="stRadio"] > div {
+    display: flex;
+    gap: 0.8rem;
+    background: #F8FAFC !important;
+    border: 1.5px solid #94A3B8 !important;
+    border-radius: 10px !important;
+    padding: 0.45rem 0.85rem !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+}
+[data-testid="stRadio"] div[role="radiogroup"]:focus-within, [data-testid="stRadio"] > div:hover {
+    border-color: #2563EB !important;
+}
+[data-testid="stRadio"] label span {
+    font-size: 0.86rem !important;
+    font-weight: 600 !important;
+    color: #1E293B !important;
+}
+
+/* Селектбокс */
+[data-testid="stSelectbox"] div[data-baseweb="select"] > div {
+    background: #F8FAFC !important;
+    border: 1.5px solid #94A3B8 !important;
+    border-radius: 10px !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+    color: #0F172A !important;
+    font-weight: 600 !important;
+}
+}
+[data-testid="stRadio"] label span {
+    font-size: 0.86rem !important;
+    font-weight: 600 !important;
+    color: #1E293B !important;
+}
+
+/* Селектбокс */
+[data-testid="stSelectbox"] div[data-baseweb="select"] > div {
+    border: 1.5px solid #CBD5E1 !important;
+    border-radius: 10px !important;
+    background: #FFFFFF !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+    font-weight: 600 !important;
+    color: #0F172A !important;
+}
+
+/* Слайдери */
+[data-testid="stSlider"] {
+    margin-bottom: 0.8rem !important;
+}
+
+/* ── КАРТКА HERO РЕЗУЛЬТАТУ ── */
 .risk-card {
+    background: #FFFFFF !important;
     border-radius: 16px;
     padding: 1.5rem 1.7rem;
     margin-bottom: 1.1rem;
     position: relative;
     overflow: hidden;
-    border: 1px solid;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
-}
-.risk-card-accent {
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 4px;
+    border: 1px solid #E2E8F0;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
 }
 .risk-badge {
     display: inline-flex;
@@ -391,7 +460,7 @@ header, header[data-testid="stHeader"], [data-testid="stHeader"],
     margin: 0.4rem 0 0.3rem;
 }
 
-/* ── ЧІПИ БІОМАРКЕРІВ ── */
+/* ── ЧІПИ ТА СТАТУСИ ── */
 .bio-pill-row {
     display: flex;
     gap: 0.5rem;
@@ -402,25 +471,23 @@ header, header[data-testid="stHeader"], [data-testid="stHeader"],
 }
 .bio-pill {
     background: #F1F5F9;
-    border: 1px solid #E2E8F0;
+    border: 1px solid #CBD5E1;
     border-radius: 8px;
-    padding: 0.3rem 0.65rem;
-    font-size: 0.75rem;
+    padding: 0.35rem 0.7rem;
+    font-size: 0.76rem;
     font-weight: 600;
-    color: #475569;
+    color: #334155;
 }
-
-/* ── ІНДИКАТОРИ СТАТУСУ ── */
 .status-pill-bar {
     border-radius: 10px;
-    padding: 0.55rem 0.85rem;
-    font-size: 0.84rem;
+    padding: 0.65rem 0.95rem;
+    font-size: 0.86rem;
     font-weight: 600;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin: 0.3rem 0 0.7rem;
-    border: 1px solid;
+    margin: 0.5rem 0 0.8rem;
+    border: 1.5px solid;
 }
 
 /* ── WHAT-IF СИМУЛЯТОР ── */
@@ -431,8 +498,6 @@ header, header[data-testid="stHeader"], [data-testid="stHeader"],
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     margin-top: 1rem;
 }
-
-/* ── ACTION ITEMS ── */
 .action-item-card {
     display: flex;
     align-items: center;
@@ -442,36 +507,12 @@ header, header[data-testid="stHeader"], [data-testid="stHeader"],
     border-radius: 10px;
     margin-bottom: 0.5rem;
     background: #F8FAFC;
-    border: 1px solid #E2E8F0;
+    border: 1px solid #CBD5E1;
     transition: background 0.2s, border-color 0.2s;
 }
 .action-item-card:hover {
     background: #EFF6FF;
-    border-color: #BFDBFE;
-}
-
-/* ── СТИЛІЗАЦІЯ ТАБІВ ── */
-.stTabs [data-baseweb="tab-list"] {
-    gap: 4px;
-    background: #F1F5F9;
-    border: 1px solid #E2E8F0;
-    border-radius: 12px;
-    padding: 4px;
-    margin-bottom: 0.8rem;
-}
-.stTabs [data-baseweb="tab"] {
-    border-radius: 8px !important;
-    font-weight: 700 !important;
-    font-size: 0.82rem !important;
-    padding: 0.48rem 0.95rem !important;
-    color: #64748B !important;
-    border: none !important;
-    transition: all 0.2s ease !important;
-}
-.stTabs [aria-selected="true"] {
-    background: #2563EB !important;
-    color: #FFFFFF !important;
-    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25) !important;
+    border-color: #93C5FD;
 }
 
 /* ── ПОКРАЩЕННЯ КНОПОК ── */
@@ -481,6 +522,13 @@ header, header[data-testid="stHeader"], [data-testid="stHeader"],
     font-size: 0.88rem !important;
     padding: 0.55rem 1.1rem !important;
     transition: all 0.2s ease !important;
+    background: #FFFFFF;
+    color: #1E293B;
+    border: 1px solid #CBD5E1;
+}
+.stButton button:hover {
+    background: #F8FAFC;
+    border-color: #94A3B8;
 }
 .stButton button[kind="primary"] {
     background: #2563EB !important;
@@ -490,19 +538,23 @@ header, header[data-testid="stHeader"], [data-testid="stHeader"],
 }
 .stButton button[kind="primary"]:hover {
     background: #1D4ED8 !important;
-    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4) !important;
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.45) !important;
 }
 .stDownloadButton button {
     border-radius: 12px !important;
     font-weight: 700 !important;
     font-size: 0.95rem !important;
     padding: 0.65rem 1.2rem !important;
+    background: #2563EB !important;
+    color: #FFFFFF !important;
+    border: none !important;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3) !important;
 }
 
-/* ── ВІДЖЕТ ФАРМАКОЕКОНОМІЧНОЇ ЕКОНОМІЇ ── */
+/* ── ВІДЖЕТ РЕЇМБУРСАЦІЇ ── */
 .savings-card {
     background: linear-gradient(135deg, #F0FDF4 0%, #FFFFFF 100%);
-    border: 1px solid #BBF7D0;
+    border: 1.5px solid #86EFAC;
     border-radius: 14px;
     padding: 1.2rem;
     margin: 0.8rem 0;
@@ -537,157 +589,76 @@ header, header[data-testid="stHeader"], [data-testid="stHeader"],
     text-transform: uppercase;
 }
 
-/* ── CHART WRAPPER ── */
-.chart-card-wrapper {
-    background: #FFFFFF;
-    border: 1px solid #E2E8F0;
-    border-radius: 14px;
-    padding: 1rem;
-    margin-bottom: 0.9rem;
-}
-
-/* ── AUDIENCE BANNER ── */
 .audience-banner {
     background: #EFF6FF;
     border: 1px solid #BFDBFE;
     border-radius: 10px;
-    padding: 0.55rem 0.9rem;
+    padding: 0.6rem 0.95rem;
     margin-bottom: 0.8rem;
     display: flex;
     align-items: center;
     gap: 0.6rem;
-    font-size: 0.82rem;
+    font-size: 0.83rem;
     color: #1E40AF;
 }
 
-/* ── FOOTER ── */
+/* ── ФУТЕР ── */
 .footer-container {
     text-align: center;
     padding: 2rem 0 1rem;
-    color: #94A3B8;
+    color: #64748B;
     font-size: 0.77rem;
     line-height: 1.6;
     border-top: 1px solid #E2E8F0;
     margin-top: 3rem;
+    background: #FFFFFF;
 }
 
-/* ── BACK LINK ── */
-.back-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    color: #2563EB;
-    font-weight: 600;
-    font-size: 0.88rem;
-    text-decoration: none;
-    margin-bottom: 1rem;
-    cursor: pointer;
-    padding: 0.3rem 0;
-}
-.back-link:hover {
-    color: #1D4ED8;
+h1, h2, h3, h4, h5, h6 {
+    color: #0F172A !important;
 }
 
-/* ── NUMBER INPUTS LIGHT STYLE ── */
-[data-testid="stNumberInput"] input {
-    border-color: #CBD5E1 !important;
-    border-radius: 10px !important;
+[data-testid="stCheckbox"] label span {
     color: #1E293B !important;
-    background: #FFFFFF !important;
-}
-[data-testid="stNumberInput"] input:focus {
-    border-color: #3B82F6 !important;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15) !important;
+    font-weight: 600 !important;
 }
 
-/* ── SELECTBOX LIGHT STYLE ── */
-[data-testid="stSelectbox"] > div > div {
-    border-color: #CBD5E1 !important;
-    border-radius: 10px !important;
-    background: #FFFFFF !important;
-    color: #1E293B !important;
-}
-
-/* ── EXPANDER LIGHT STYLE ── */
 [data-testid="stExpander"] {
-    border: 1px solid #E2E8F0 !important;
+    border: 1px solid #CBD5E1 !important;
     border-radius: 12px !important;
-    background: #F8FAFC !important;
+    background: #FFFFFF !important;
 }
 [data-testid="stExpander"] summary {
-    color: #334155 !important;
+    color: #0F172A !important;
     font-weight: 700 !important;
 }
 
-/* ── DATAFRAME LIGHT STYLE ── */
 [data-testid="stDataFrame"] {
-    border: 1px solid #E2E8F0 !important;
+    border: 1px solid #CBD5E1 !important;
     border-radius: 10px !important;
-}
-
-/* ── GENERAL HEADINGS COLOR ── */
-h1, h2, h3, h4, h5, h6 {
-    color: #1E293B !important;
-}
-
-/* ── STEP BREADCRUMB ── */
-.breadcrumb {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.82rem;
-    color: #94A3B8;
-    font-weight: 600;
-    margin-bottom: 1.2rem;
-}
-.breadcrumb-active {
-    color: #2563EB;
-    font-weight: 700;
-}
-
-/* ── CTA BUTTON LARGE ── */
-.cta-button-wrapper .stButton button {
-    width: 100% !important;
-    height: 56px !important;
-    font-size: 1.1rem !important;
-    font-weight: 800 !important;
-    border-radius: 14px !important;
-    background: #2563EB !important;
-    color: #FFFFFF !important;
-    border: none !important;
-    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35) !important;
-    letter-spacing: -0.01em !important;
-}
-.cta-button-wrapper .stButton button:hover {
-    background: #1D4ED8 !important;
-    box-shadow: 0 8px 24px rgba(37, 99, 235, 0.45) !important;
-    transform: translateY(-1px);
-}
-
-/* ── CHECKBOX LIGHT ── */
-[data-testid="stCheckbox"] label span {
-    color: #334155 !important;
+    background: #FFFFFF !important;
 }
 </style>
 """, unsafe_allow_html=True)
 
-    # Script to hide Streamlit UI elements
+    # Force Light Theme on Root Document via JavaScript
     components.html("""
 <script>
-const dict = {
-    'Deploy': '',
-    'System': 'Системна',
-    'Light': 'Світла',
-    'Dark': 'Темна',
-    'Rerun': 'Перезапустити',
-    'Auto rerun': 'Автоперезапуск',
-    'Clear cache': 'Очистити кеш',
-    'Print': 'Друкувати',
-    'Settings': 'Налаштування'
-};
-function applyTranslations() {
+function enforceLightTheme() {
     try {
         const rootDoc = window.parent.document;
+        rootDoc.documentElement.setAttribute('data-theme', 'light');
+        rootDoc.documentElement.style.setProperty('background-color', '#FFFFFF', 'important');
+        rootDoc.body.setAttribute('data-theme', 'light');
+        rootDoc.body.style.setProperty('background-color', '#FFFFFF', 'important');
+        
+        const appContainers = rootDoc.querySelectorAll('.stApp, [data-testid="stAppViewContainer"], [data-testid="stMain"], section.main');
+        appContainers.forEach(el => {
+            el.style.setProperty('background', '#FFFFFF', 'important');
+            el.style.setProperty('background-color', '#FFFFFF', 'important');
+            el.style.setProperty('color', '#1E293B', 'important');
+        });
+
         rootDoc.querySelectorAll('[data-testid="stDeployButton"]').forEach(el => el.style.setProperty('display', 'none', 'important'));
         rootDoc.querySelectorAll('[data-testid="InputInstructions"]').forEach(el => el.style.setProperty('display', 'none', 'important'));
         rootDoc.querySelectorAll('[data-testid="stSidebar"], [data-testid="collapsedControl"]').forEach(el => el.style.setProperty('display', 'none', 'important'));
@@ -695,10 +666,11 @@ function applyTranslations() {
     } catch (err) {}
 }
 try {
+    enforceLightTheme();
     const rootDoc = window.parent.document;
-    const observer = new MutationObserver(applyTranslations);
+    const observer = new MutationObserver(enforceLightTheme);
     observer.observe(rootDoc.body, { childList: true, subtree: true });
-    setInterval(applyTranslations, 300);
+    setInterval(enforceLightTheme, 300);
 } catch(e) {}
 </script>
 """, height=0, width=0)

@@ -55,13 +55,13 @@ def render_results_page():
         active_translations = SCREENING_FEATURE_TRANSLATIONS
 
     # Top Action Bar
-    t_c1, t_c2, t_c3 = st.columns([1.2, 1.8, 1])
+    t_c1, t_c2 = st.columns([1.2, 2.8])
     with t_c1:
         if st.button("← Змінити параметри", use_container_width=True):
             st.switch_page("pages/calculator.py")
     with t_c2:
         render_html(f"""
-        <div style="display:flex; justify-content:center; gap:0.5rem; align-items:center; padding-top:0.3rem;">
+        <div style="display:flex; justify-content:flex-end; gap:0.5rem; align-items:center; padding-top:0.3rem;">
             <span style="font-size:0.75rem; font-weight:700; padding:0.25rem 0.65rem; border-radius:6px; background:#EFF6FF; color:#1D4ED8; border:1px solid #BFDBFE;">
                 {'🩺 Клініка (23 маркери)' if is_clinical_mode else '🟢 Скринінг (12 ознак)'}
             </span>
@@ -70,9 +70,6 @@ def render_results_page():
             </span>
         </div>
         """)
-    with t_c3:
-        if st.button("🖨️ Друк звіту", use_container_width=True):
-            components.html("<script>window.parent.print();</script>", height=0, width=0)
 
     st.markdown("<div style='height:0.8rem;'></div>", unsafe_allow_html=True)
 
