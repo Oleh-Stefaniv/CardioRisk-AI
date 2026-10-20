@@ -377,40 +377,37 @@ div[data-baseweb="tab-border"] {
     color: #0F172A !important;
 }
 
-/* Радіо кнопки — чіткі контури */
+/* Радіо кнопки — сучасний медичний вигляд */
 [data-testid="stRadio"] {
-    margin-bottom: 0.9rem !important;
+    margin-bottom: 0.65rem !important;
 }
-[data-testid="stRadio"] div[role="radiogroup"], [data-testid="stRadio"] > div {
-    display: flex;
-    gap: 0.8rem;
-    background: #F8FAFC !important;
-    border: 1.5px solid #94A3B8 !important;
-    border-radius: 10px !important;
-    padding: 0.45rem 0.85rem !important;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+[data-testid="stRadio"] > label {
+    font-size: 0.83rem !important;
+    font-weight: 700 !important;
+    color: #334155 !important;
+    margin-bottom: 0.25rem !important;
+    display: inline-block !important;
 }
-[data-testid="stRadio"] div[role="radiogroup"]:focus-within, [data-testid="stRadio"] > div:hover {
+[data-testid="stRadio"] div[role="radiogroup"] {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 0.75rem !important;
+    background: #FFFFFF !important;
+    border: 1.5px solid #CBD5E1 !important;
+    border-radius: 8px !important;
+    padding: 0.4rem 0.75rem !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03) !important;
+    transition: all 0.2s ease-in-out !important;
+    width: 100% !important;
+    align-items: center !important;
+}
+[data-testid="stRadio"] div[role="radiogroup"]:focus-within,
+[data-testid="stRadio"] div[role="radiogroup"]:hover {
     border-color: #2563EB !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12) !important;
 }
 [data-testid="stRadio"] label span {
-    font-size: 0.86rem !important;
-    font-weight: 600 !important;
-    color: #1E293B !important;
-}
-
-/* Селектбокс */
-[data-testid="stSelectbox"] div[data-baseweb="select"] > div {
-    background: #F8FAFC !important;
-    border: 1.5px solid #94A3B8 !important;
-    border-radius: 10px !important;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
-    color: #0F172A !important;
-    font-weight: 600 !important;
-}
-}
-[data-testid="stRadio"] label span {
-    font-size: 0.86rem !important;
+    font-size: 0.85rem !important;
     font-weight: 600 !important;
     color: #1E293B !important;
 }
@@ -418,11 +415,14 @@ div[data-baseweb="tab-border"] {
 /* Селектбокс */
 [data-testid="stSelectbox"] div[data-baseweb="select"] > div {
     border: 1.5px solid #CBD5E1 !important;
-    border-radius: 10px !important;
+    border-radius: 8px !important;
     background: #FFFFFF !important;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03) !important;
     font-weight: 600 !important;
     color: #0F172A !important;
+}
+[data-testid="stSelectbox"] div[data-baseweb="select"] > div:hover {
+    border-color: #2563EB !important;
 }
 
 /* Слайдери */

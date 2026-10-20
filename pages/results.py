@@ -20,23 +20,50 @@ def render_results_page():
     if not st.session_state.get('models_loaded', False):
         init_models()
 
+    # Синхронізація з user_store
+    user_store = st.session_state.get('user_store', {})
+    if 'mode_selection' in user_store:
+        st.session_state['is_clinical_mode'] = ("Клініка" in user_store['mode_selection'])
+    if 'persp_selection' in user_store:
+        st.session_state['is_doctor_view'] = ("Для лікаря" in user_store['persp_selection'])
+    if 'insurance_choice' in user_store:
+        st.session_state['insurance_choice'] = user_store['insurance_choice']
+
     # Fallback default data if visited directly without calculator
     if not st.session_state.get('calculation_done', False):
-        st.session_state['input_data'] = pd.DataFrame([{
-            'age_years': 54.0, 'gender_male': 0.0, 'height': 175.0, 'weight': 82.0,
-            'BMI': 26.8, 'HighBP': 0.0, 'HighChol': 0.0, 'Diabetes': 0.0,
-            'Smoker': 0.0, 'Alcohol': 0.0, 'PhysActivity': 1.0, 'FamilyHistory': 0.0
-        }])
-        st.session_state['is_clinical_mode'] = False
-        st.session_state['is_doctor_view'] = False
-        st.session_state['insurance_choice'] = "🏛️ Державна програма «Доступні ліки» (НСЗУ / 100% реімбурсація)"
-        st.session_state['patient_summary'] = {
-            'is_clinical': False, 'sex_str': "Жінка", 'age_str': "54 років",
-            'height': 175, 'weight': 82.0, 'bmi': 26.8, 'bmi_status': "Надлишкова маса",
-            'HighBP': 0, 'HighChol': 0, 'diabetes_str': "Норма", 'Stroke': 0,
-            'Smoker': 0, 'PhysActivity': 1, 'Fruits': 1, 'Veggies': 1,
-            'HvyAlcoholConsump': 0, 'GenHlth_str': 'Задовільне', 'FamilyHistory': 0
-        }
+        if st.session_state.get('is_clinical_mode', False):
+            st.session_state['input_data'] = pd.DataFrame([{
+                'age_years': 54.0, 'gender_male': 1.0, 'height': 175.0, 'weight': 82.0,
+                'BMI': 26.8, 'ap_hi': 140.0, 'ap_lo': 88.0, 'pulse_pressure': 52.0,
+                'heart_rate': 74.0, 'bp_meds': 0.0, 'tot_chol': 5.2, 'ldl_chol': 3.2,
+                'hdl_chol': 1.25, 'triglycerides': 1.6, 'glucose_fasting': 5.4, 'hba1c': 5.6,
+                'cigs_per_day': 0.0, 'alcohol_status': 0.0, 'physical_activity': 1.0,
+                'resting_ecg': 0.0, 'chest_pain_type': 0.0, 'egfr_renal': 88.0, 'family_history': 0.0
+            }])
+            st.session_state['patient_summary'] = {
+                'is_clinical': True, 'sex_str': "Чоловік", 'age_str': "54 років",
+                'height': 175, 'weight': 82.0, 'bmi': 26.8, 'bmi_status': "Надлишкова маса",
+                'bp_str': "140/88 мм рт. ст.", 'HighBP': 1, 'HighChol': 1,
+                'chol_str': "ЗХ 5.2 / ЛПНЩ 3.2 / ЛПВЩ 1.25 ммоль/л",
+                'gluc_str': "Глюкоза 5.4 ммоль/л / HbA1c 5.6%",
+                'Stroke': 0, 'Smoker': 0, 'cigs_per_day': 0, 'PhysActivity': 1,
+                'Fruits': 1, 'Veggies': 1, 'HvyAlcoholConsump': 0,
+                'GenHlth_str': "ШКФ: 88 мл/хв", 'MentHlth': 0, 'PhysHlth': 0, 'DiffWalk': 0
+            }
+        else:
+            st.session_state['input_data'] = pd.DataFrame([{
+                'age_years': 54.0, 'gender_male': 0.0, 'height': 175.0, 'weight': 82.0,
+                'BMI': 26.8, 'HighBP': 0.0, 'HighChol': 0.0, 'Diabetes': 0.0,
+                'Smoker': 0.0, 'Alcohol': 0.0, 'PhysActivity': 1.0, 'FamilyHistory': 0.0
+            }])
+            st.session_state['patient_summary'] = {
+                'is_clinical': False, 'sex_str': "Жінка", 'age_str': "54 років",
+                'height': 175, 'weight': 82.0, 'bmi': 26.8, 'bmi_status': "Надлишкова маса",
+                'HighBP': 0, 'HighChol': 0, 'diabetes_str': "Норма", 'Stroke': 0,
+                'Smoker': 0, 'PhysActivity': 1, 'Fruits': 1, 'Veggies': 1,
+                'HvyAlcoholConsump': 0, 'GenHlth_str': 'Задовільне', 'FamilyHistory': 0
+            }
+        st.session_state['calculation_done'] = True
 
     input_data = st.session_state['input_data']
     is_clinical_mode = st.session_state.get('is_clinical_mode', False)

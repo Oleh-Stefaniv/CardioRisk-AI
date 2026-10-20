@@ -18,7 +18,7 @@ def render_calculator_page():
             'scr_hchol': "Ні",
             'scr_diab': "Ні (глікемія в нормі)",
             'scr_smk': "Не палю",
-            'scr_act': "Так",
+            'scr_act': "Так (≥150 хв/тиждень)",
             'scr_alco': "Помірно або не вживаю",
             'scr_fam': "Ні (або невідомо)",
             # Клініка
@@ -47,11 +47,19 @@ def render_calculator_page():
             'clin_smk': "Не палю",
             'clin_cigs': 15,
             'clin_alco': "Помірно або не вживаю",
-            'clin_act': "Так",
+            'clin_act': "Так (≥150 хв/тиждень)",
             'clin_fam': "Ні",
             'insurance_choice': "🏛️ Державна програма «Доступні ліки» (НСЗУ / 100% реімбурсація)"
         }
     store = st.session_state['user_store']
+
+    # Відновлюємо віджетні ключі з user_store, якщо вони були скинуті Streamlit при перемиканні сторінок
+    for k, v in store.items():
+        w_k = f"w_{k}"
+        if w_k not in st.session_state:
+            st.session_state[w_k] = v
+    if "w_insurance_profile" not in st.session_state and "insurance_choice" in store:
+        st.session_state["w_insurance_profile"] = store["insurance_choice"]
 
     # ── 2. НАВІГАЦІЙНИЙ РЯДОК ──
     col_nav1, col_nav2 = st.columns([1, 1])
@@ -73,6 +81,8 @@ def render_calculator_page():
         st.markdown("<div style='font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#475569; margin-bottom:0.35rem;'>1. Рівень діагностики:</div>", unsafe_allow_html=True)
         mode_opts = ["🟢 Скринінг (12 ознак)", "🩺 Клініка (23 маркери)"]
         mode_idx = mode_opts.index(store['mode_selection']) if store['mode_selection'] in mode_opts else 0
+        if "w_mode_selection" not in st.session_state:
+            st.session_state["w_mode_selection"] = store['mode_selection']
         mode_selection = st.radio(
             "Рівень діагностики:",
             options=mode_opts,
@@ -83,11 +93,15 @@ def render_calculator_page():
             help="Скринінговий режим — 12 базових факторів для швидкої самооцінки. Клінічний режим — 23 маркери для точного CDSS-аналізу лікарем."
         )
         store['mode_selection'] = mode_selection
+        st.session_state['is_clinical_mode'] = ("Клініка" in mode_selection)
+        st.query_params['mode'] = 'clinical' if "Клініка" in mode_selection else 'screening'
 
     with conf_c2:
         st.markdown("<div style='font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#475569; margin-bottom:0.35rem;'>2. Аудиторія подання висновку:</div>", unsafe_allow_html=True)
         persp_opts = ["👤 Для пацієнта", "🩺 Для лікаря"]
         persp_idx = persp_opts.index(store['persp_selection']) if store['persp_selection'] in persp_opts else 0
+        if "w_persp_selection" not in st.session_state:
+            st.session_state["w_persp_selection"] = store['persp_selection']
         persp_selection = st.radio(
             "Аудиторія подання:",
             options=persp_opts,
@@ -98,6 +112,8 @@ def render_calculator_page():
             help="Для пацієнта: доступна мова, практичні звички, «Доступні ліки». Для лікаря: ESC 2024, МКХ-10, цільові рівні ЛПНЩ та АТ."
         )
         store['persp_selection'] = persp_selection
+        st.session_state['is_doctor_view'] = ("Для лікаря" in persp_selection)
+        st.query_params['persp'] = 'doctor' if "Для лікаря" in persp_selection else 'patient'
 
     is_clinical_mode = "Клініка" in mode_selection
     is_doctor_view = "Для лікаря" in persp_selection
@@ -185,76 +201,121 @@ def render_calculator_page():
             """)
 
         with scr_tab2:
-            hbp_opts = ["Ні", "Так"]
-            hbp_idx = hbp_opts.index(store['scr_hbp']) if store['scr_hbp'] in hbp_opts else 0
-            high_bp_choice = st.radio(
-                "Чи буває у вас підвищений тиск (≥140/90 мм рт. ст.)?",
-                options=hbp_opts,
-                index=hbp_idx,
-                key="w_scr_hbp",
-                help="Артеріальна гіпертензія створює хронічне перевантаження судин."
-            )
-            store['scr_hbp'] = high_bp_choice
-            high_bp = 1 if high_bp_choice == "Так" else 0
+            col_b1, col_b2 = st.columns(2, gap="large")
+            with col_b1:
+                hbp_opts = ["Ні", "Так"]
+                hbp_idx = hbp_opts.index(store['scr_hbp']) if store['scr_hbp'] in hbp_opts else 0
+                if "w_scr_hbp" not in st.session_state:
+                    st.session_state["w_scr_hbp"] = store['scr_hbp']
+                high_bp_choice = st.radio(
+                    "🩺 Підвищений АТ (≥140/90 мм рт. ст.):",
+                    options=hbp_opts,
+                    index=hbp_idx,
+                    horizontal=True,
+                    key="w_scr_hbp",
+                    help="Артеріальна гіпертензія створює хронічне перевантаження судин."
+                )
+                store['scr_hbp'] = high_bp_choice
+                high_bp = 1 if high_bp_choice == "Так" else 0
 
-            st.markdown("<div style='height:0.8rem;'></div>", unsafe_allow_html=True)
-            hchol_opts = ["Ні", "Так"]
-            hchol_idx = hchol_opts.index(store['scr_hchol']) if store['scr_hchol'] in hchol_opts else 0
-            high_chol_choice = st.radio(
-                "Чи виявлено підвищений загальний холестерин (>5.2 ммоль/л)?",
-                options=hchol_opts,
-                index=hchol_idx,
-                key="w_scr_hchol",
-                help="Гіперхолестеринемія є провідною причиною атеросклеротичних бляшок."
-            )
-            store['scr_hchol'] = high_chol_choice
-            high_chol = 1 if high_chol_choice == "Так" else 0
+                st.markdown("<div style='height:0.4rem;'></div>", unsafe_allow_html=True)
 
-            st.markdown("<div style='height:0.8rem;'></div>", unsafe_allow_html=True)
-            diab_opts = ["Ні (глікемія в нормі)", "Так (діабет або предіабет)"]
-            diab_idx = diab_opts.index(store['scr_diab']) if store['scr_diab'] in diab_opts else 0
-            diabetes_choice = st.radio(
-                "Чи є діагноз цукрового діабету або підвищеного цукру?",
-                options=diab_opts,
-                index=diab_idx,
-                key="w_scr_diab",
-                help="Гіперглікемія викликає ангіопатію та прискорює судинні зміни."
-            )
-            store['scr_diab'] = diabetes_choice
-            diabetes = 1 if "Так" in diabetes_choice else 0
+                hchol_opts = ["Ні", "Так"]
+                hchol_idx = hchol_opts.index(store['scr_hchol']) if store['scr_hchol'] in hchol_opts else 0
+                if "w_scr_hchol" not in st.session_state:
+                    st.session_state["w_scr_hchol"] = store['scr_hchol']
+                high_chol_choice = st.radio(
+                    "🧪 Підвищений холестерин (>5.2 ммоль/л):",
+                    options=hchol_opts,
+                    index=hchol_idx,
+                    horizontal=True,
+                    key="w_scr_hchol",
+                    help="Гіперхолестеринемія є провідною причиною атеросклеротичних бляшок."
+                )
+                store['scr_hchol'] = high_chol_choice
+                high_chol = 1 if high_chol_choice == "Так" else 0
+
+            with col_b2:
+                diab_opts = ["Ні (норма)", "Так (діабет/предіабет)"]
+                cur_diab = store.get('scr_diab', "Ні")
+                diab_idx = 0 if "Ні" in cur_diab else 1
+                if "w_scr_diab" not in st.session_state:
+                    st.session_state["w_scr_diab"] = diab_opts[diab_idx]
+                diabetes_choice = st.radio(
+                    "🩸 Цукровий діабет або підвищений цукор:",
+                    options=diab_opts,
+                    index=diab_idx,
+                    horizontal=True,
+                    key="w_scr_diab",
+                    help="Гіперглікемія викликає ангіопатію та прискорює судинні зміни."
+                )
+                store['scr_diab'] = diabetes_choice
+                diabetes = 1 if "Так" in diabetes_choice else 0
 
         with scr_tab3:
-            smk_opts = ["Не палю", "Палю регулярно"]
-            smk_idx = smk_opts.index(store['scr_smk']) if store['scr_smk'] in smk_opts else 0
-            smoker_choice = st.radio("Статус тютюнопаління", options=smk_opts, index=smk_idx, key="w_scr_smk")
-            store['scr_smk'] = smoker_choice
-            smoker = 1 if "регулярно" in smoker_choice else 0
+            col_l1, col_l2 = st.columns(2, gap="large")
+            with col_l1:
+                smk_opts = ["Не палю", "Палю регулярно"]
+                smk_idx = smk_opts.index(store['scr_smk']) if store['scr_smk'] in smk_opts else 0
+                if "w_scr_smk" not in st.session_state:
+                    st.session_state["w_scr_smk"] = store['scr_smk']
+                smoker_choice = st.radio(
+                    "🚬 Статус тютюнопаління:",
+                    options=smk_opts,
+                    index=smk_idx,
+                    horizontal=True,
+                    key="w_scr_smk"
+                )
+                store['scr_smk'] = smoker_choice
+                smoker = 1 if "регулярно" in smoker_choice else 0
 
-            st.markdown("<div style='height:0.8rem;'></div>", unsafe_allow_html=True)
-            act_opts = ["Так", "Ні (сидячий спосіб)"]
-            act_idx = act_opts.index(store['scr_act']) if store['scr_act'] in act_opts else 0
-            phys_choice = st.radio("Регулярна рухова активність (≥150 хв/тиждень)", options=act_opts, index=act_idx, key="w_scr_act")
-            store['scr_act'] = phys_choice
-            phys_activity = 1 if "Так" in phys_choice else 0
+                st.markdown("<div style='height:0.4rem;'></div>", unsafe_allow_html=True)
 
-            st.markdown("<div style='height:0.8rem;'></div>", unsafe_allow_html=True)
-            alco_opts = ["Помірно або не вживаю", "Надмірно / регулярно"]
-            alco_idx = alco_opts.index(store['scr_alco']) if store['scr_alco'] in alco_opts else 0
-            hvy_alcohol_choice = st.radio("Вживання алкоголю", options=alco_opts, index=alco_idx, key="w_scr_alco")
-            store['scr_alco'] = hvy_alcohol_choice
-            hvy_alcohol = 1 if "Надмірно" in hvy_alcohol_choice else 0
+                alco_opts = ["Помірно або не вживаю", "Надмірно / регулярно"]
+                alco_idx = alco_opts.index(store['scr_alco']) if store['scr_alco'] in alco_opts else 0
+                if "w_scr_alco" not in st.session_state:
+                    st.session_state["w_scr_alco"] = store['scr_alco']
+                hvy_alcohol_choice = st.radio(
+                    "🍷 Вживання алкоголю:",
+                    options=alco_opts,
+                    index=alco_idx,
+                    horizontal=True,
+                    key="w_scr_alco"
+                )
+                store['scr_alco'] = hvy_alcohol_choice
+                hvy_alcohol = 1 if "Надмірно" in hvy_alcohol_choice else 0
 
-            st.markdown("<div style='height:0.8rem;'></div>", unsafe_allow_html=True)
-            fam_opts = ["Ні (або невідомо)", "Так"]
-            fam_idx = fam_opts.index(store['scr_fam']) if store['scr_fam'] in fam_opts else 0
-            fam_choice = st.radio(
-                "Сімейний анамнез ранніх ССЗ (інфаркт/інсульт у батьків до 55–65 років)",
-                options=fam_opts,
-                index=fam_idx,
-                key="w_scr_fam"
-            )
-            store['scr_fam'] = fam_choice
-            fam_history = 1 if "Так" in fam_choice else 0
+            with col_l2:
+                act_opts = ["Так (≥150 хв/тиждень)", "Ні (сидячий спосіб)"]
+                cur_act = store.get('scr_act', "Так")
+                act_idx = 0 if "Так" in cur_act else 1
+                if "w_scr_act" not in st.session_state:
+                    st.session_state["w_scr_act"] = act_opts[act_idx]
+                phys_choice = st.radio(
+                    "🏃 Регулярна рухова активність:",
+                    options=act_opts,
+                    index=act_idx,
+                    horizontal=True,
+                    key="w_scr_act"
+                )
+                store['scr_act'] = phys_choice
+                phys_activity = 1 if "Так" in phys_choice else 0
+
+                st.markdown("<div style='height:0.4rem;'></div>", unsafe_allow_html=True)
+
+                fam_opts = ["Ні (або невідомо)", "Так"]
+                fam_idx = fam_opts.index(store['scr_fam']) if store['scr_fam'] in fam_opts else 0
+                if "w_scr_fam" not in st.session_state:
+                    st.session_state["w_scr_fam"] = store['scr_fam']
+                fam_choice = st.radio(
+                    "🧬 Сімейний анамнез ранніх ССЗ (<55–65 р.):",
+                    options=fam_opts,
+                    index=fam_idx,
+                    horizontal=True,
+                    key="w_scr_fam"
+                )
+                store['scr_fam'] = fam_choice
+                fam_history = 1 if "Так" in fam_choice else 0
 
         input_data = pd.DataFrame([{
             'age_years': float(scr_age),
@@ -477,37 +538,52 @@ def render_calculator_page():
             """)
 
         with clin_tab4:
-            c_smk_opts = ["Не палю", "Палю регулярно"]
-            c_smk_idx = c_smk_opts.index(store['clin_smk']) if store['clin_smk'] in c_smk_opts else 0
-            c_smk_choice = st.radio("Статус куріння", c_smk_opts, index=c_smk_idx, key="w_clin_smk")
-            store['clin_smk'] = c_smk_choice
-            clin_smoke = 1 if "регулярно" in c_smk_choice else 0
-            if clin_smoke:
-                cigs_per_day = st.slider("Кількість сигарет на добу", min_value=1, max_value=60, value=int(store['clin_cigs']), step=1, key="w_clin_cigs")
-                store['clin_cigs'] = cigs_per_day
-            else:
-                cigs_per_day = 0
+            col_c_l1, col_c_l2 = st.columns(2, gap="large")
+            with col_c_l1:
+                c_smk_opts = ["Не палю", "Палю регулярно"]
+                c_smk_idx = c_smk_opts.index(store['clin_smk']) if store['clin_smk'] in c_smk_opts else 0
+                if "w_clin_smk" not in st.session_state:
+                    st.session_state["w_clin_smk"] = store['clin_smk']
+                c_smk_choice = st.radio("🚬 Статус куріння:", c_smk_opts, index=c_smk_idx, horizontal=True, key="w_clin_smk")
+                store['clin_smk'] = c_smk_choice
+                clin_smoke = 1 if "регулярно" in c_smk_choice else 0
+                if clin_smoke:
+                    cigs_per_day = st.slider("Кількість сигарет на добу", min_value=1, max_value=60, value=int(store['clin_cigs']), step=1, key="w_clin_cigs")
+                    store['clin_cigs'] = cigs_per_day
+                else:
+                    cigs_per_day = 0
 
-            st.markdown("<div style='height:0.8rem;'></div>", unsafe_allow_html=True)
-            c_alco_opts = ["Помірно або не вживаю", "Надмірно (>14 порцій/тиждень)"]
-            c_alco_idx = c_alco_opts.index(store['clin_alco']) if store['clin_alco'] in c_alco_opts else 0
-            c_alco_choice = st.radio("Вживання алкоголю", c_alco_opts, index=c_alco_idx, key="w_clin_alco")
-            store['clin_alco'] = c_alco_choice
-            clin_alco = 1 if "Надмірно" in c_alco_choice else 0
+                st.markdown("<div style='height:0.4rem;'></div>", unsafe_allow_html=True)
 
-            st.markdown("<div style='height:0.8rem;'></div>", unsafe_allow_html=True)
-            c_act_opts = ["Так", "Ні (гіподинамія)"]
-            c_act_idx = c_act_opts.index(store['clin_act']) if store['clin_act'] in c_act_opts else 0
-            c_act_choice = st.radio("Регулярні аеробні тренування (≥150 хв/тиждень)", c_act_opts, index=c_act_idx, key="w_clin_act")
-            store['clin_act'] = c_act_choice
-            clin_active = 1 if "Так" in c_act_choice else 0
+                c_alco_opts = ["Помірно або не вживаю", "Надмірно (>14 порцій/тижд)"]
+                cur_alco = store.get('clin_alco', "Помірно або не вживаю")
+                c_alco_idx = 0 if "Помірно" in cur_alco else 1
+                if "w_clin_alco" not in st.session_state:
+                    st.session_state["w_clin_alco"] = c_alco_opts[c_alco_idx]
+                c_alco_choice = st.radio("🍷 Вживання алкоголю:", c_alco_opts, index=c_alco_idx, horizontal=True, key="w_clin_alco")
+                store['clin_alco'] = c_alco_choice
+                clin_alco = 1 if "Надмірно" in c_alco_choice else 0
 
-            st.markdown("<div style='height:0.8rem;'></div>", unsafe_allow_html=True)
-            c_fam_opts = ["Ні", "Так (інфаркт/інсульт у батьків до 55–65 років)"]
-            c_fam_idx = c_fam_opts.index(store['clin_fam']) if store['clin_fam'] in c_fam_opts else 0
-            c_fam_choice = st.radio("Сімейний анамнез ранніх ССЗ", c_fam_opts, index=c_fam_idx, key="w_clin_fam")
-            store['clin_fam'] = c_fam_choice
-            clin_fam = 1 if "Так" in c_fam_choice else 0
+            with col_c_l2:
+                c_act_opts = ["Так (≥150 хв/тиждень)", "Ні (гіподинамія)"]
+                cur_act = store.get('clin_act', "Так")
+                c_act_idx = 0 if "Так" in cur_act else 1
+                if "w_clin_act" not in st.session_state:
+                    st.session_state["w_clin_act"] = c_act_opts[c_act_idx]
+                c_act_choice = st.radio("🏃 Регулярні аеробні тренування:", c_act_opts, index=c_act_idx, horizontal=True, key="w_clin_act")
+                store['clin_act'] = c_act_choice
+                clin_active = 1 if "Так" in c_act_choice else 0
+
+                st.markdown("<div style='height:0.4rem;'></div>", unsafe_allow_html=True)
+
+                c_fam_opts = ["Ні", "Так (інфаркт/інсульт у батьків)"]
+                cur_fam = store.get('clin_fam', "Ні")
+                c_fam_idx = 0 if "Ні" in cur_fam else 1
+                if "w_clin_fam" not in st.session_state:
+                    st.session_state["w_clin_fam"] = c_fam_opts[c_fam_idx]
+                c_fam_choice = st.radio("🧬 Сімейний анамнез ранніх ССЗ:", c_fam_opts, index=c_fam_idx, horizontal=True, key="w_clin_fam")
+                store['clin_fam'] = c_fam_choice
+                clin_fam = 1 if "Так" in c_fam_choice else 0
 
         input_data = pd.DataFrame([{
             'age_years': float(clin_age),
